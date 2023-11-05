@@ -11,44 +11,33 @@ using namespace std;
 class LibrFunc
 {
 public:
-    vector<uint16_t> a;  // Вектор для зберігання числа a
-    vector<uint16_t> b;  // Вектор для зберігання числа b
-    vector<uint16_t> n;  // Вектор для зберігання числа n
+    vector<int> a;
+    vector<int> b;
+    vector<int> n;
 
-    // Конструктор класу, який приймає три рядки та ініціалізує відповідні вектори a, b, n
     LibrFunc(string s1, string s2, string s3);
 
-    // Метод для перетворення рядка s в вектор цілих чисел
-    vector<uint16_t> Switch(string s);
-    // Метод для виведення вектора цілих чисел на екран
-    void Print(vector<uint16_t> a);
+    vector<int> Switch(string s);
 
-    // Метод для перетворення константи в вектор цілих чисел
-    vector<uint16_t> ConstantToBigInt(int constant);
+    void Print(vector<int> a);
 
-    // Метод для додавання двох багаторозрядних чисел
-    vector<uint16_t> LongAdd(vector<uint16_t> a, vector<uint16_t> b);
+    vector<int> ConstantToBigInt(int constant);
 
-    // Метод для віднімання двох багаторозрядних чисел
-    vector<uint16_t> LongSub(vector<uint16_t> a, vector<uint16_t> b);
+    vector<int> LongAdd(vector<int> a, vector<int> b);
 
-    // Метод для порівняння двох багаторозрядних чисел
-    int LongCmp(vector<uint16_t> a, vector<uint16_t> b);
+    vector<int> LongSub(vector<int> a, vector<int> b);
 
-    // Метод для множення багаторозрядного числа на одну цифру
-    vector<uint16_t> LongMulOneDigit(vector<uint16_t> a, int b);
+    int LongCmp(vector<int> a, vector<int> b);
 
-    // Метод для множення двох багаторозрядних чисел
-    vector<uint16_t> LongMul(vector<uint16_t> a, vector<uint16_t> b);
+    vector<int> LongMulOneDigit(vector<int> a, int b);
 
-    // Метод для зсуву багаторозрядного числа вліво на певну кількість бітів
-    vector<uint16_t> LongShiftDigitsToHigh(vector<uint16_t> a, int b);
+    vector<int> LongMul(vector<int> a, vector<int> b);
 
-    // Метод для піднесення багаторозрядного числа до степеня
-    vector<uint16_t> LongPower(vector<uint16_t> a, vector<uint16_t> b);
+    vector<int> LongShiftDigitsToHigh(vector<int> a, int b);
 
-    // Метод для операції ділення двох багаторозрядних чисел
-    pair<vector<uint16_t>, vector<uint16_t>> LongDiv(vector<uint16_t> a, vector<uint16_t> b);
+    vector<int> LongPower(vector<int> a, vector<int> b);
+
+    pair<vector<int>, vector<int>> LongDiv(vector<int> a, vector<int> b);
 
 };
 
@@ -59,227 +48,221 @@ LibrFunc::LibrFunc(string s1, string s2, string s3)
     n = Switch(s3);
 }
 
-vector<uint16_t> LibrFunc::Switch(string s)
+vector<int> LibrFunc::Switch(string s)
 {
-    // Метод конвертує рядок s у числа та виконує перетворення цих чисел у нову систему числення
-
     char k;
-    vector<uint16_t> d2;  // Вектор для зберігання перетворених чисел
+    vector<int> d2;
 
     int size = s.length();
 
-    // Якщо довжина рядка не парна, додаємо "0" зліва для коректності
-    if (size % 2 != 0)
+    while (size % 4 != 0)
     {
         s = "0" + s;
-        cout << s;
         size++;
     }
 
     int j = 0;
-    uint16_t* d1 = new uint16_t[size];
+    int* d1 = new int[size];
 
-    // Перетворюємо символи рядка у числа і зберігаємо їх у масиві d1
     for (int i = 0; i < size; i++)
     {
         k = s[i];
 
-        // Перевірка, чи символ є цифрою (0-9) чи літерою (A-F)
         if (isalpha(s[i]) == 0)
         {
-            d1[j] = k - '0';  // Перетворюємо цифровий символ у відповідне число
+            d1[j] = k - '0';
         }
         else
         {
-            d1[j] = k - 'a' + 10;  // Перетворюємо літерний символ (A-F) у відповідне число (10-15)
+            d1[j] = k - 'a' + 10;
         }
         j++;
     }
 
-    cout << "\nNumber in new system:" << endl;  // Виводимо повідомлення про число у новій системі
+    cout << "\nNumber in new system:" << endl;
 
-    // Конвертуємо пари чисел (в шістнадцятковому форматі) у десятковий формат та додаємо до вектору d2
-    for (int i = 0; i < s.length(); i = i + 2)
+    for (int i = 0; i < s.length(); i = i + 4)
     {
-        d2.insert(d2.begin(), d1[i] * 16 + d1[i + 1] * 1);  // Для чисел у шістнадцятковій системі, використовуємо множення на 16
+        d2.insert(d2.begin(), d1[i] * pow(16, 3) + d1[i + 1] * pow(16, 2) + d1[i + 2] * 16 + d1[i + 3]);
     }
 
-    // Виводимо числа у новій системі
-    for (auto i = d2.begin(); i != d2.end(); i++)
+    for (int i = 0; i < d2.size(); i++)
     {
-        cout << (int)(*i) << " ";
+        cout << d2[i] << " ";
     }
+    cout << endl;
+    
+    delete[] d1; 
 
-    return d2;  // Повертаємо вектор перетворених чисел
-};
-
-vector<uint16_t> LibrFunc::ConstantToBigInt(int constant) {
-    // Метод призначений для створення вектора, який представляє велике ціле число на основі одного константного числа
-
-    vector<uint16_t> result;  // Вектор для зберігання великого цілого числа
-
-    result.push_back(constant);  // Додаємо константне число до вектора
-
-    return result;  // Повертаємо вектор, представляючи велике ціле число
+    return d2;
 }
 
-vector<uint16_t> LibrFunc::LongAdd(vector<uint16_t> a, vector<uint16_t> b) // Додавання багаторозрядних чисел
+vector<int> LibrFunc::ConstantToBigInt(int constant) {
+
+    vector<int> result; 
+
+    result.push_back(constant);  
+
+    return result;
+}
+
+vector<int> LibrFunc::LongAdd(vector<int> a, vector<int> b) // ????????? ??????????????? ?????
 {
-    // Забезпечуємо, що обидва вектори мають однакову довжину, доповнюючи їх нулями
+ 
     if (a.size() > b.size())
     {
         for (int i = b.size(); i < a.size(); i++)
         {
-            b.push_back(0);  // Додаємо новий елемент до кінця вектору 'b', поки він не стане такою ж довжиною, як вектор 'a'
+            b.push_back(0);  // ?????? ????? ??????? ?? ???? ??????? 'b', ???? ?? ?? ????? ????? ? ????????, ?? ?????? 'a'
         }
     }
     if (b.size() > a.size())
     {
         for (int i = a.size(); i < b.size(); i++)
         {
-            a.push_back(0);  // Додаємо новий елемент до кінця вектору 'a', поки він не стане такою ж довжиною, як вектор 'b'
+            a.push_back(0);  // ?????? ????? ??????? ?? ???? ??????? 'a', ???? ?? ?? ????? ????? ? ????????, ?? ?????? 'b'
         }
     }
 
-    int carry = 0;  // Ініціалізуємо змінну для зберігання переносу
-    vector<uint16_t> c;  // Вектор для зберігання результату додавання
+    int carry = 0;  // ??????????? ????? ??? ????????? ????????
+    vector<int> c;  // ?????? ??? ????????? ?????????? ?????????
     int temp;
 
     for (int i = 0; i < a.size(); i++)
     {
-        temp = a[i] + b[i] + carry;  // Побітово додаємо числа разом з переносом
-        c.push_back(temp & ((int)pow(2, 8) - 1));  // Записуємо менший байт у число
-        carry = temp >> 8;  // Отримуємо перенос, що буде доданий на наступному кроці
+        temp = a[i] + b[i] + carry;  // ??????? ?????? ????? ????? ? ?????????
+        c.push_back(temp & ((int)pow(2, 16) - 1));  // ???????? ?????? ???? ? ?????
+        carry = temp >> 16;  // ???????? ???????, ?? ???? ??????? ?? ?????????? ?????
     }
 
     if (carry != 0)
     {
-        c.push_back(carry); // Додаємо залишковий перенос до результату, якщо він існує
+        c.push_back(carry); // ?????? ?????????? ??????? ?? ??????????, ???? ?? ????
     }
 
-    return c;  // Повертаємо вектор, який містить результат додавання багаторозрядних чисел
+    return c;  // ????????? ??????, ???? ?????? ????????? ????????? ??????????????? ?????
 };
 
-vector<uint16_t> LibrFunc::LongSub(vector<uint16_t> a, vector<uint16_t> b)  // Віднімання багаторозрядних чисел
+vector<int> LibrFunc::LongSub(vector<int> a, vector<int> b)  // ????????? ??????????????? ?????
 {
-    vector<uint16_t> c;  // Вектор для зберігання результату віднімання
+    vector<int> c;  // ?????? ??? ????????? ?????????? ?????????
 
-    // Забезпечуємо, що обидва вектори мають однакову довжину, доповнюючи їх нулями
+    // ???????????, ?? ?????? ??????? ????? ???????? ???????, ?????????? ?? ??????
     if (a.size() > b.size())
     {
         for (int i = b.size(); i < a.size(); i++)
         {
-            b.push_back(0);  // Додаємо новий елемент до кінця вектору 'b', щоб зрівняти довжини векторів
+            b.push_back(0);  // ?????? ????? ??????? ?? ???? ??????? 'b', ??? ??????? ??????? ???????
         }
     }
     if (b.size() > a.size())
     {
         for (int i = a.size(); i < b.size(); i++)
         {
-            a.push_back(0);  // Додаємо новий елемент до кінця вектору 'a', щоб зрівняти довжини векторів
+            a.push_back(0);  // ?????? ????? ??????? ?? ???? ??????? 'a', ??? ??????? ??????? ???????
         }
     }
 
-    // Перевіряємо, яке з чисел більше або чи вони рівні, щоб не отримати від'ємного результату
+    // ??????????, ??? ? ????? ????? ??? ?? ???? ????, ??? ?? ???????? ??'?????? ??????????
     if (LongCmp(a, b) == 1 || LongCmp(a, b) == 0)
     {
         int borrow = 0;
         int temp;
 
-        // Виконуємо віднімання побітово з урахуванням позик із старших розрядів
+        // ???????? ????????? ??????? ? ??????????? ????? ?? ??????? ???????
         for (int i = 0; i < a.size(); i++)
         {
-            temp = a[i] - b[i] - borrow;  // Віднімаємо поточні біти з позичкою
+            temp = a[i] - b[i] - borrow;  // ???????? ??????? ??? ? ????????
             if (temp >= 0)
             {
-                c.push_back(temp);  // Якщо результат віднімання позитивний або нуль, додаємо його до результату 'c'
-                borrow = 0;  // Скидаємо позичку
+                c.push_back(temp);  // ???? ????????? ????????? ?????????? ??? ????, ?????? ???? ?? ?????????? 'c'
+                borrow = 0;  // ??????? ???????
             }
             else
             {
-                c.push_back((int)pow(2, 8) + temp);  // Якщо результат віднімання від'ємний, додаємо його з переповненням від 256 (2^8)
-                borrow = 1;  // Встановлюємо позичку для наступного розряду
+                c.push_back((int)pow(2, 16) + temp);  // ???? ????????? ????????? ??'?????, ?????? ???? ? ????????????? ?? 256 (2^8)
+                borrow = 1;  // ???????????? ??????? ??? ?????????? ???????
             }
         }
     }
     else
     {
-        cout << "The second number is bigger" << endl;  // Виводимо повідомлення, якщо друге число більше
+        cout << "The second number is bigger" << endl;  // ???????? ???????????, ???? ????? ????? ?????
     }
 
-    return c;  // Повертаємо вектор, який містить результат віднімання багаторозрядних чисел
+    return c;  // ????????? ??????, ???? ?????? ????????? ????????? ??????????????? ?????
 };
 
-int LibrFunc::LongCmp(vector<uint16_t> a, vector<uint16_t> b) // функція порівняння багаторозрядних чисел
+int LibrFunc::LongCmp(vector<int> a, vector<int> b) // ??????? ????????? ??????????????? ?????
 {
     if (a.size() > b.size())
     {
         for (int i = b.size(); i < a.size(); i++)
         {
-            b.push_back(0);  // Зрівнюємо довжини векторів, доповнюючи менший вектор нулями
+            b.push_back(0);  // ???????? ??????? ???????, ?????????? ?????? ?????? ??????
         }
     }
     else if (b.size() > a.size())
     {
         for (int i = a.size(); i < b.size(); i++)
         {
-            a.push_back(0);  // Зрівнюємо довжини векторів, доповнюючи менший вектор нулями
+            a.push_back(0);  // ???????? ??????? ???????, ?????????? ?????? ?????? ??????
         }
     }
 
-    int i = a.size() - 1;  // Порівнюємо кожен біт, починаючи з найстаршого
+    int i = a.size() - 1;  // ????????? ????? ??, ????????? ? ???????????
 
-    while (a[i] == b[i]) //поки символи однакові
+    while (a[i] == b[i]) //???? ??????? ???????
     {
-        i = i - 1; //беремо наступний символ
-        if (i == -1) //якщо символи закінчились
+        i = i - 1; //?????? ????????? ??????
+        if (i == -1) //???? ??????? ??????????
         {
-            return 0;   // Це означає, що числа ідентичні
+            return 0;   // ?? ??????, ?? ????? ?????????
         }
     }
-    if (a[i] > b[i])//якщо символ з числа а більший за символ з числа b
+    if (a[i] > b[i])//???? ?????? ? ????? ? ?????? ?? ?????? ? ????? b
     {
-        return 1; // Перше число більше за друге
+        return 1; // ????? ????? ????? ?? ?????
     }
     else
     {
-        return -1;  // Друге число більше за перше
+        return -1;  // ????? ????? ????? ?? ?????
     }
 }
 
-vector<uint16_t> LibrFunc::LongShiftDigitsToHigh(vector<uint16_t> a, int f) //зсув вліво (тобто у бук старших індексів) на f 
+vector<int> LibrFunc::LongShiftDigitsToHigh(vector<int> a, int f) //???? ???? (????? ? ??? ??????? ???????) ?? f 
 {
     for (int i = 0; i < f; i++)
     {
-        a.insert(a.begin(), 0);  //дописуємо f нулів до початку вектора
+        a.insert(a.begin(), 0);  //???????? f ???? ?? ??????? ???????
     }
     return a;
 };
 
-vector<uint16_t> LibrFunc::LongMulOneDigit(vector<uint16_t> a, int b) // Множення багаторозрядного числа на однорозрядну цифру
+vector<int> LibrFunc::LongMulOneDigit(vector<int> a, int b) // ???????? ???????????????? ????? ?? ???????????? ?????
 {
-    vector<uint16_t> c;  // Результат множення
-    int carry = 0;  // Перенос
+    vector<int> c;  // ????????? ????????
+    int carry = 0;  // ???????
     int temp;
 
     for (int i = 0; i < a.size(); i++)
     {
-        temp = a[i] * b + carry;  // Множимо поточний розряд на цифру b та додаємо попередній перенос
-        c.push_back(temp & ((int)pow(2, 8) - 1));  // Записуємо менший байт (розряд) у результат
-        carry = temp >> 8;  // Зберігаємо старший байт для наступної ітерації
+        temp = a[i] * b + carry;  // ??????? ???????? ?????? ?? ????? b ?? ?????? ?????????? ???????
+        c.push_back(temp & ((int)pow(2, 16) - 1));  // ???????? ?????? ???? (??????) ? ?????????
+        carry = temp >> 16;  // ???????? ??????? ???? ??? ???????? ????????
     }
 
-    c.push_back(carry);  // Додаємо старший байт до результату
+    c.push_back(carry);  // ?????? ??????? ???? ?? ??????????
 
-    return c;  // Повертаємо результат множення
+    return c;  // ????????? ????????? ????????
 }
 
-vector<uint16_t> LibrFunc::LongMul(vector<uint16_t> a, vector<uint16_t> b) // Множення багаторозрядних чисел
+vector<int> LibrFunc::LongMul(vector<int> a, vector<int> b) // ???????? ??????????????? ?????
 {
-    // Знайдемо максимальну довжину результату
+    // ???????? ??????????? ??????? ??????????
     int maxLen = a.size() + b.size();
 
-    // Додамо необхідну кількість нульових бітів до векторів a та b
+    // ?????? ????????? ??????? ???????? ??? ?? ??????? a ?? b
     while (a.size() < maxLen)
     {
         a.push_back(0);
@@ -289,105 +272,91 @@ vector<uint16_t> LibrFunc::LongMul(vector<uint16_t> a, vector<uint16_t> b) // Мн
         b.push_back(0);
     }
 
-    vector<uint16_t> c(maxLen, 0);  // Результат буде мати максимальну можливу довжину
-    vector<uint16_t> temp;
+    vector<int> c(maxLen, 0);  // ????????? ???? ???? ??????????? ??????? ???????
+    vector<int> temp;
     c.push_back(0);
 
     for (int i = 0; i < a.size(); i++)
     {
-        temp = LongMulOneDigit(a, b[i]);  // Множимо число a на однорозрядну цифру b
-        temp = LongShiftDigitsToHigh(temp, i);  // Зсуваємо результат на потрібну кількість розрядів
-        c = LongAdd(temp, c);  // Додаємо результат до попереднього накопиченого результату
+        temp = LongMulOneDigit(a, b[i]);  // ??????? ????? a ?? ???????????? ????? b
+        temp = LongShiftDigitsToHigh(temp, i);  // ??????? ????????? ?? ??????? ??????? ???????
+        c = LongAdd(temp, c);  // ?????? ????????? ?? ???????????? ???????????? ??????????
     }
 
     while ((c.size() >= 1) && (c[c.size() - 1] == 0))
     {
-        c.pop_back();  // Видаляємо всі нулі з правого кінця вектора c для оптимізації та позбавлення в результаті зайвих нулів
+        c.pop_back();  // ????????? ?? ??? ? ??????? ???? ??????? c ??? ?????????? ?? ??????????? ? ????????? ?????? ????
     }
 
-    return c;  // Повертаємо результат множення
+    return c;  // ????????? ????????? ????????
 }
 
-vector<uint16_t> LibrFunc::LongPower(vector<uint16_t> a, vector<uint16_t> b)  // Піднесення числа до степеня за схемою Горнера
+vector<int> LibrFunc::LongPower(vector<int> a, vector<int> b)  
 {
-    vector<uint16_t> c;  // Вектор, який буде містити бінарне представлення степеня b
-    vector<uint16_t> temp;
+    vector<int> c; 
+    vector<int> temp;
 
-    // Перетворюємо степінь b у бінарний вигляд і зберігаємо його у векторі c
-    for (int i = 0; i < b.size(); i++)
+    
+    for (int i = b.size() - 1; i < b.size(); i++)
     {
         int x = b[i];
-        for (int j = 0; j < 7; j++)
+        for (int j = 0; j < 15; j++)
         {
-            c.push_back(x % 2);  // Отримуємо найменший біт останнього числа вектору b і додаємо його до вектора c
-            x = x >> 1;  // Зсуваємо число b вправо на один біт (еквівалентно цілочисельному діленню на 2)
+            c.push_back(x % 2);
+            x = x >> 1;
         }
     }
 
-    reverse(c.begin(), c.end());  // Перевертаємо вектор, щоб мати бінарне представлення в правильному порядку
-    
-    vector<uint16_t> d;  // Вектор для накопичення результату
-    d.push_back(1);  // Ініціалізуємо його значенням 1, як початкове значення
+    reverse(c.begin(), c.end());
+
+    vector<int> d;  
+    d.push_back(1);
 
     for (int j = 0; j < c.size(); j++)
     {
         if (c[j] == 1)
         {
-            d = LongMul(d, a);  // Якщо біт степеня рівний 1, множимо поточний результат на a
+            d = LongMul(d, a);  
         }
 
-        a = LongMul(a, a);  // Піднесення a до квадрату на кожному кроці
+        a = LongMul(a, a); 
     }
 
-    return d;  // Повертаємо результат піднесення до степеня
+    return d; 
 }
 
-pair<vector<uint16_t>, vector<uint16_t>> LibrFunc::LongDiv(vector<uint16_t> a, vector<uint16_t> b)
+pair<vector<int>, vector<int>> LibrFunc::LongDiv(vector<int> a, vector<int> b)
 {
-    // Видаляємо всі нулі з кінця вектора 'a' для оптимізації операцій ділення
-    while (a[a.size() - 1] == 0)
-    {
-        a.pop_back();
-    }
-
-    // Видаляємо всі нулі з кінця вектора 'b' для оптимізації операцій ділення
-    while (b[b.size() - 1] == 0)
-    {
-        b.pop_back();
-    }
-
-    // Обробка помилки ділення на нуль.
     if (b.empty()) {
         throw runtime_error("Division by zero is not allowed.");
     }
 
-    int k = b.size(); // Довжина дільника 'b'
+    int k = b.size(); 
     int t;
-    vector<uint16_t> c; // Вектор, який використовується для обчислення дільника на кожному кроці
-    vector<uint16_t> r = a; // Вектор, який використовується для зберігання решти під час ділення
-    vector<uint16_t> q; // Вектор, представляє результат ділення (частку)
-    q.push_back(0); // Ініціалізуємо частку нулем
+    vector<int> c;
+    vector<int> r = a; 
+    vector<int> q; 
+    q.push_back(0); 
 
-    while (LongCmp(r, b) != -1) // Поки решта 'r' більше або дорівнює дільнику 'b'
+    while (LongCmp(r, b) != -1) 
     {
-        t = r.size(); // Поточна довжина решти 'r'
-        c = LongShiftDigitsToHigh(b, t - k); // Відновлюємо дільник 'b' на поточному кроці
+        t = r.size(); 
+        c = LongShiftDigitsToHigh(b, t - k); 
 
-        if (LongCmp(r, c) == -1) // Порівнюємо решту та дільник
+        if (LongCmp(r, c) == -1) 
         {
             t = t - 1;
-            c = LongShiftDigitsToHigh(b, t - k); // Зменшуємо довжину дільника на одиницю, якщо потрібно
+            c = LongShiftDigitsToHigh(b, t - k); 
         }
 
-        if (LongCmp(r, c) >= 0) // Якщо решта більше або дорівнює дільнику
+        if (LongCmp(r, c) >= 0) 
         {
-            r = LongSub(r, c); // Віднімаємо дільник від решти
-            q = LongAdd(q, LongShiftDigitsToHigh({ 1 }, t - k)); // Додаємо одиницю до частки
+            r = LongSub(r, c); 
+            q = LongAdd(q, LongShiftDigitsToHigh({ 1 }, t - k)); 
         }
         else
             break;
 
-        // Видаляємо всі нулі з правого кінця решти 'r' для оптимізації та позбавлення в результаті зайвих нулів
         while ((r.size() >= 1) && (r[r.size() - 1] == 0))
         {
             r.pop_back();
@@ -399,23 +368,26 @@ pair<vector<uint16_t>, vector<uint16_t>> LibrFunc::LongDiv(vector<uint16_t> a, v
         }
     }
 
-    return make_pair(q, r); // Повертаємо пару, де перший елемент - частка, другий - остача
+    return make_pair(q, r); 
 }
 
-void LibrFunc::Print(vector<uint16_t> a)  // Метод для виводу багаторозрядного числа у шістнадцятковому форматі
+void LibrFunc::Print(vector<int> a)
 {
-    char* c = new char[2 * a.size()];
-    // Створюємо масив символів для зберігання шістнадцяткового представлення числа
-    int p1;
-    int p2;
-    for (int i = 0, j = a.size() - 1; i < 2 * a.size() - 1; i = i + 2, j--)
+    char* c = new char[4 * a.size()];
+
+    int p1, p2, p3, p4;
+
+    for (int i = 0, j = a.size() - 1; i < 4 * a.size(); i = i + 4, j--)
 
     {
-        p1 = a[j] / 16;  // Окремо виділяємо старший і молодший байти числа
-        p2 = a[j] % 16;
+        p1 = ( a[j] >> 12) & 0xF;
+        p2 = ( a[j] >> 8) & 0xF;
+        p3 = ( a[j] >> 4) & 0xF;
+        p4 = a[j] & 0xF;
+
         if (p1 <= 9)
         {
-            c[i] = p1 + '0';  // Якщо це цифра (0-9), конвертуємо в символ від '0' до '9'
+            c[i] = p1 + '0';
         }
         else
         {
@@ -437,7 +409,7 @@ void LibrFunc::Print(vector<uint16_t> a)  // Метод для виводу багаторозрядного ч
         }
         if (p2 <= 9)
         {
-            c[i + 1] = p2 + '0';  // Аналогічно для молодшого байту
+            c[i + 1] = p2 + '0';
         }
         else
         {
@@ -457,30 +429,76 @@ void LibrFunc::Print(vector<uint16_t> a)  // Метод для виводу багаторозрядного ч
                 break;
             }
         }
+
+        if (p3 <= 9)
+        {
+            c[i+2] = p3 + '0';
+        }
+        else
+        {
+            switch (p3)
+            {
+            case 10: c[i + 2] = 'a';
+                break;
+            case 11: c[i + 2] = 'b';
+                break;
+            case 12: c[i + 2] = 'c';
+                break;
+            case 13: c[i + 2] = 'd';
+                break;
+            case 14: c[i + 2] = 'e';
+                break;
+            case 15: c[i + 2] = 'f';
+                break;
+            }
+        }
+
+        if (p4 <= 9)
+        {
+            c[i+3] = p4 + '0';
+        }
+        else
+        {
+            switch (p4)
+            {
+            case 10: c[i + 3] = 'a';
+                break;
+            case 11: c[i + 3] = 'b';
+                break;
+            case 12: c[i + 3] = 'c';
+                break;
+            case 13: c[i + 3] = 'd';
+                break;
+            case 14: c[i + 3] = 'e';
+                break;
+            case 15: c[i + 3] = 'f';
+                break;
+            }
+        }
     }
-    for (int i = 0; i < 2 * a.size(); i++)
+
+    for (int i = 0; i < 4 * a.size(); i++)
 
     {
-        cout << c[i];  // Виводимо символи шістнадцяткового представлення числа
+        cout << c[i]; 
     }
     cout << endl;
 }
 
-// Функція для вимірювання часу виконання операції
 double MeasureTime(function<void()> operation) {
-    // Запам'ятовуємо час початку виконання операції
+    // ?????'??????? ??? ??????? ????????? ????????
     auto start_time = chrono::high_resolution_clock::now();
-    
-    // Виконуємо передану операцію
+
+    // ???????? ???????? ????????
     operation();
-    
-    // Запам'ятовуємо час завершення виконання операції
+
+    // ?????'??????? ??? ?????????? ????????? ????????
     auto end_time = chrono::high_resolution_clock::now();
 
-    // Обчислюємо тривалість виконання операції
+    // ?????????? ????????? ????????? ????????
     chrono::duration<double> elapsed_time = end_time - start_time;
 
-    // Повертаємо час виконання операції у секундах
+    // ????????? ??? ????????? ???????? ? ????????
     return elapsed_time.count();
 }
 
@@ -488,17 +506,15 @@ int main()
 {
     string s1, s2, s3, s4;
 
+    s1 = "5029f2adcfcd1ec460e6aa4a01e50120fe13aa011d472b95fb28cb3ce397ef559c09d2cb3da2e0c9a63e47d889abdeee54a147980ffd0031602aa62ee05938f481748b636123c3fb07f624c8065f1b978d78b5b519146e62cac57139857f295273d0e617de37fbdd1aa002aa955d5670989ba7d90310f2044583065b2eb6ffe2";
     s2 = "5539647ee7034e20855240a49605dd2f7acf1febcce1b355a63857ba4da6cdb8f552ea153c730d97a1fa97c2bb0630d2375bf91396c9f484101699cc7b5d6d1e6ccd0992582b99977b631045fb465c170a6b7f4b96eeea3bd44302619405bd895db6092100e99d0b652849a83aa33923adf2ecd95ff47206d03ab650e2c012ad";
-    s1 = "166204774917731692465071051218633847177575649661847257577738225172643770991995056377238993232343726095055476657806754336269256061881651684346605667474097642554519354407729197504117667461725385675392789405136523964331953461604602583132401264589827197103795360364478041063457183868839728065265361621786808996368";
+    
     s3 = "3ff";
     s4 = "a1";
 
     LibrFunc A(s1, s2, s3);
-    vector<uint16_t> h1 = A.Switch(s4);
+    vector<int> h1 = A.Switch(s4);
     cout << endl;
-
-    vector<uint16_t> zero = A.ConstantToBigInt(0);
-    vector<uint16_t> one = A.ConstantToBigInt(1);
 
     int k = 10;
     int t;
@@ -509,7 +525,7 @@ int main()
     cout << "Time taken for comparison: " << time_cmp << " seconds" << endl;
 
     double time_add = MeasureTime([&]() {
-        cout << "\n a + b : " ;
+        cout << "\n a + b : ";
         A.Print(A.LongAdd(A.a, A.b));
         });
     cout << "Time taken for addition: " << time_add << " seconds" << endl;
@@ -529,27 +545,26 @@ int main()
     cout << "\n a ^ 2 : ";
     A.Print(A.LongMul(A.a, A.a));
 
-    pair<vector<uint16_t>, vector<uint16_t>> result;
+    pair<vector<int>, vector<int>> result;
     double time_div = MeasureTime([&]() {
         result = A.LongDiv(A.a, A.b);
         });
     cout << endl << "Time taken for division: " << time_div << " seconds" << endl;
 
-    vector<uint16_t> quotient = result.first;
-    vector<uint16_t> remainder = result.second;
+    vector<int> quotient = result.first;
+    vector<int> remainder = result.second;
     cout << "\n a / b = : ";
-    A.Print(quotient); 
+    A.Print(quotient);
 
     cout << "\n a % b = : ";
-    A.Print(remainder); 
-/*
-    double time_power = MeasureTime([&]() {
-        cout << "\n a ^ b : ";
-        A.Print(A.LongPower(A.a, A.b));
-        });
-    cout << "Time taken for exponentiation: " << time_power << " seconds" << endl;
-*/
-    //ПЕРЕВІРКА
+    A.Print(remainder);
+    
+        double time_power = MeasureTime([&]() {
+            cout << "\n a ^ b : ";
+            A.Print(A.LongPower(A.a, A.b));
+            });
+        cout << "Time taken for exponentiation: " << time_power << " seconds" << endl;
+ 
 
     cout << "\na*c + b*c = ";
     A.Print(A.LongAdd(A.LongMul(A.a, A.n), A.LongMul(A.b, A.n)));
@@ -561,7 +576,7 @@ int main()
     A.Print(A.LongMul(A.a, h1));
 
     cout << "\na + a ... + a = ";
-    vector<uint16_t> h0;
+    vector<int> h0;
     h0.push_back(0);
     int g = 161;
     for (int i = 0; i < g; i++)
